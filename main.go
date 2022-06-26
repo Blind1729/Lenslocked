@@ -1,18 +1,20 @@
 package main
 
 import (
+	"Lenslocked/views"
 	"fmt"
 	"github.com/gorilla/mux"
-	"html/template"
 	"net/http"
 )
 
-var homeTemplate *template.Template
-var contactTemplate *template.Template
+var (
+	homeView    *views.View
+	contactView *views.View
+)
 
 func home(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := homeTemplate.Execute(w, nil); err != nil {
+	if err := homeView.Template.Execute(w, nil); err != nil {
 		panic(err)
 	}
 }
@@ -35,27 +37,20 @@ func pageDoesNotExist(w http.ResponseWriter, _ *http.Request) {
 
 func contact(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := contactTemplate.Execute(w, nil); err != nil {
+	if err := contactView.Template.Execute(w, nil); err != nil {
 		panic(err)
 	}
 }
 
 func main() {
-	var err error
-	homeTemplate, err = template.ParseFiles("views/home.gohtml", "views/layouts/footer.gohtml")
-	if err != nil {
-		panic(err)
-	}
-	contactTemplate, err = template.ParseFiles("views/contact.gohtml", "views/layouts/footer.gohtml")
-	if err != nil {
-		panic(err)
-	}
+	homeView = views.NewView("views/home.gohtml")
+	contactView = views.NewView("views/contact.gohtml")
 	router := mux.NewRouter()
 	router.HandleFunc("/", home)
 	router.HandleFunc("/faq", faq)
 	router.HandleFunc("/contact", contact)
 	router.NotFoundHandler = http.HandlerFunc(pageDoesNotExist)
-	err = http.ListenAndServe(":3000", router)
+	err := http.ListenAndServe(":3000", router)
 	if err != nil {
 		return
 	}

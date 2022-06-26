@@ -3,14 +3,17 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"html/template"
 	"net/http"
 )
 
+var homeTemplate *template.Template
+var contactTemplate *template.Template
+
 func home(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	_, err := fmt.Fprintf(w, "<h1>Welcome to my site</h1>")
-	if err != nil {
-		return
+	if err := homeTemplate.Execute(w, nil); err != nil {
+		panic(err)
 	}
 }
 
@@ -30,12 +33,29 @@ func pageDoesNotExist(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
+func contact(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	if err := contactTemplate.Execute(w, nil); err != nil {
+		panic(err)
+	}
+}
+
 func main() {
+	var err error
+	homeTemplate, err = template.ParseFiles("views/home.gohtml")
+	if err != nil {
+		panic(err)
+	}
+	contactTemplate, err = template.ParseFiles("views/contact.gohtml")
+	if err != nil {
+		panic(err)
+	}
 	router := mux.NewRouter()
 	router.HandleFunc("/", home)
 	router.HandleFunc("/faq", faq)
+	router.HandleFunc("/contact", contact)
 	router.NotFoundHandler = http.HandlerFunc(pageDoesNotExist)
-	err := http.ListenAndServe(":3000", router)
+	err = http.ListenAndServe(":3000", router)
 	if err != nil {
 		return
 	}

@@ -1,10 +1,14 @@
 package views
 
-import "html/template"
+import (
+	"html/template"
+)
 
-func NewView(files ...string) *View {
+func NewView(layout string, files ...string) *View {
 	// We append footer view to every page
-	files = append(files, "views/layouts/footer.gohtml")
+	files = append(files,
+		"views/layouts/footer.gohtml",
+		"views/layouts/bootstrap.gohtml")
 
 	t, err := template.ParseFiles(files...)
 	if err != nil {
@@ -13,9 +17,11 @@ func NewView(files ...string) *View {
 
 	return &View{
 		Template: t,
+		Layout:   layout,
 	}
 }
 
 type View struct {
 	Template *template.Template
+	Layout   string
 }

@@ -8,7 +8,8 @@ func NewView(layout string, files ...string) *View {
 	// We append footer view to every page
 	files = append(files,
 		"views/layouts/footer.gohtml",
-		"views/layouts/bootstrap.gohtml")
+		"views/layouts/bootstrap.gohtml",
+		"views/layouts/navbar.gohtml")
 
 	t, err := template.ParseFiles(files...)
 	if err != nil {

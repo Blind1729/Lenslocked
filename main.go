@@ -14,7 +14,7 @@ var (
 
 func home(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := homeView.Template.ExecuteTemplate(w, homeView.Layout, nil); err != nil {
+	if err := homeView.Render(w, nil); err != nil {
 		panic(err)
 	}
 }
@@ -37,7 +37,7 @@ func pageDoesNotExist(w http.ResponseWriter, _ *http.Request) {
 
 func contact(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := contactView.Template.ExecuteTemplate(w, contactView.Layout, nil); err != nil {
+	if err := contactView.Render(w, nil); err != nil {
 		panic(err)
 	}
 }

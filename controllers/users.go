@@ -27,5 +27,8 @@ func (u *Users) New(w http.ResponseWriter, _ *http.Request) {
 // Create a new user
 // POST /signup
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		panic(err)
+	}
 	fmt.Fprintf(w, "Sign up successful")
 }

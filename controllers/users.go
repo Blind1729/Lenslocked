@@ -3,6 +3,7 @@ package controllers
 import (
 	"Lenslocked/views"
 	"fmt"
+	"github.com/gorilla/schema"
 	"net/http"
 )
 
@@ -24,11 +25,22 @@ func (u *Users) New(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
+type SignupForm struct {
+	Email           string `schema:"email"`
+	Password        string `schema:"password"`
+	ConfirmPassword string `schema:"confirm_password"`
+}
+
 // Create a new user
 // POST /signup
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		panic(err)
 	}
-	fmt.Fprintf(w, "Sign up successful")
+	dec := schema.NewDecoder()
+	var form SignupForm
+	if err := dec.Decode(&form, r.PostForm); err != nil {
+		panic(err)
+	}
+	fmt.Fprintln(w, form)
 }

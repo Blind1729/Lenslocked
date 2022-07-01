@@ -8,12 +8,14 @@ import (
 
 const (
 	LayoutDir         = "views/layouts/"
+	TemplateDir       = "views/"
 	TemplateExtension = ".gohtml"
 )
 
 func NewView(layout string, files ...string) *View {
+	addTemplatePath(files)
+	addTemplateExt(files)
 	layoutFiles := layoutFiles()
-
 	for file := range layoutFiles {
 		files = append(files, layoutFiles[file])
 	}
@@ -34,7 +36,7 @@ type View struct {
 	Layout   string
 }
 
-func (v *View) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (v *View) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	if err := v.Render(w, nil); err != nil {
 		panic(err)
@@ -52,4 +54,16 @@ func layoutFiles() []string {
 		panic(err)
 	}
 	return files
+}
+
+func addTemplatePath(files []string) {
+	for i, f := range files {
+		files[i] = TemplateDir + f
+	}
+}
+
+func addTemplateExt(files []string) {
+	for i, f := range files {
+		files[i] = f + TemplateExtension
+	}
 }
